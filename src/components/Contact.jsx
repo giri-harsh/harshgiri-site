@@ -7,6 +7,13 @@ import {
   Terminal,
   Send,
 } from "lucide-react";
+import { createClient } from "@supabase/supabase-js";
+
+/* Supabase client */
+const supabase = createClient(
+  "https://ufpfpfqegrtlvyymzedf.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmcGZwZnFlZ3J0bHZ5eW16ZWRmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk5NjE4ODksImV4cCI6MjA4NTUzNzg4OX0.URmQh54IEB_O9uQwLN9_QGAUCOGulHOx-eyFAxr4rWM"
+);
 
 export default function Contact() {
   const [form, setForm] = useState({
@@ -26,7 +33,7 @@ export default function Contact() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isValid) {
       setStatus("error");
@@ -35,14 +42,25 @@ export default function Contact() {
 
     setStatus("sending");
 
-    setTimeout(() => {
-      setStatus("sent");
-      setForm({ name: "", email: "", phone: "", message: "" });
+    const { error } = await supabase.from("contacts").insert([
+      {
+        name: form.name || null,
+        email: form.email || null,
+        phone: form.phone || null,
+        message: form.message,
+      },
+    ]);
 
-      setTimeout(() => {
-        setStatus("idle");
-      }, 3000);
-    }, 1800);
+    if (error) {
+      console.error(error);
+      setStatus("error");
+      return;
+    }
+
+    setStatus("sent");
+    setForm({ name: "", email: "", phone: "", message: "" });
+
+    setTimeout(() => setStatus("idle"), 3000);
   };
 
   return (
@@ -50,52 +68,23 @@ export default function Contact() {
       <h2 className="connect-title">Let’s Connect</h2>
 
       <div className="social-row">
-        <a
-          className="sbtn"
-          href="https://github.com/giri-harsh"
-          target="_blank"
-          rel="noreferrer"
-        >
+        <a className="sbtn" href="https://github.com/giri-harsh" target="_blank" rel="noreferrer">
           <Github size={36} />
           <span>GitHub</span>
         </a>
-
-        <a
-          className="sbtn"
-          href="https://linkedin.com/in/giri-harsh"
-          target="_blank"
-          rel="noreferrer"
-        >
+        <a className="sbtn" href="https://linkedin.com/in/giri-harsh" target="_blank" rel="noreferrer">
           <Linkedin size={36} />
           <span>LinkedIn</span>
         </a>
-
-        <a
-          className="sbtn"
-          href="https://www.instagram.com/pseudo_harsh/"
-          target="_blank"
-          rel="noreferrer"
-        >
+        <a className="sbtn" href="https://www.instagram.com/pseudo_harsh/" target="_blank" rel="noreferrer">
           <Instagram size={36} />
           <span>Instagram</span>
         </a>
-
-        <a
-          className="sbtn"
-          href="https://leetcode.com/u/Harsh-Giri/"
-          target="_blank"
-          rel="noreferrer"
-        >
+        <a className="sbtn" href="https://leetcode.com/u/Harsh-Giri/" target="_blank" rel="noreferrer">
           <Code size={36} />
           <span>LeetCode</span>
         </a>
-
-        <a
-          className="sbtn"
-          href="https://www.hackerrank.com/profile/giri_harsh"
-          target="_blank"
-          rel="noreferrer"
-        >
+        <a className="sbtn" href="https://www.hackerrank.com/profile/giri_harsh" target="_blank" rel="noreferrer">
           <Terminal size={36} />
           <span>HackerRank</span>
         </a>
@@ -196,12 +185,6 @@ export default function Contact() {
           text-decoration: none;
         }
 
-        .sbtn span {
-          font-size: 12px;
-          letter-spacing: 0.4px;
-          color: rgba(255,255,255,0.8);
-        }
-
         .sbtn:hover {
           transform: translateY(-4px) scale(1.05);
           background: linear-gradient(135deg, #6cf2c2, #7aa2ff);
@@ -209,15 +192,6 @@ export default function Contact() {
           box-shadow:
             0 0 18px rgba(108,242,194,0.45),
             0 0 32px rgba(122,162,255,0.35);
-        }
-
-        .sbtn:hover span {
-          color: #05070d;
-        }
-
-        .sbtn:active {
-          transform: translateY(0) scale(0.9);
-          box-shadow: 0 0 0 rgba(0,0,0,0);
         }
 
         .connect-form {
@@ -231,6 +205,11 @@ export default function Contact() {
           display: flex;
           gap: 16px;
           flex-wrap: wrap;
+        }
+
+        .f-row input {
+          flex: 1;
+          min-width: 220px;
         }
 
         .connect-form input,
@@ -253,7 +232,6 @@ export default function Contact() {
           background: linear-gradient(135deg, #6cf2c2, #7aa2ff);
           color: #05070d;
           font-size: 14px;
-          letter-spacing: .4px;
           display: inline-flex;
           align-items: center;
           justify-content: center;
@@ -262,12 +240,12 @@ export default function Contact() {
           transition: transform .15s ease;
         }
 
-        .send-btn:active {
-          transform: scale(.92);
+        .send-btn:hover {
+          transform: scale(1.04);
         }
 
-        .send-btn.sending {
-          background: linear-gradient(135deg, #6cf2c2 0%, #6cf2c2 50%, #7aa2ff 100%);
+        .send-btn:active {
+          transform: scale(.92);
         }
 
         .form-msg {
@@ -286,9 +264,7 @@ export default function Contact() {
         .footer-mark {
           margin-top: 80px;
           font-size: 12px;
-          letter-spacing: 0.4px;
           color: rgba(255,255,255,0.45);
-          text-align: center;
         }
       `}</style>
     </section>
