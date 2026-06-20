@@ -7,12 +7,15 @@ export default function CanvasBG() {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
 
+    const isTouch = window.matchMedia("(hover: none)").matches;
+    const PARTICLE_COUNT = isTouch ? 80 : 220;
+
     let w = window.innerWidth;
     let h = window.innerHeight;
     canvas.width = w;
     canvas.height = h;
 
-    const particles = Array.from({ length: 220 }, () => ({
+    const particles = Array.from({ length: PARTICLE_COUNT }, () => ({
       x: Math.random() * w,
       y: Math.random() * h,
       r: Math.random() * 3 + 1,
@@ -21,6 +24,7 @@ export default function CanvasBG() {
     }));
 
     let scrollFactor = 0;
+    let rafId;
 
     const onScroll = () => {
       const vh = window.innerHeight;
@@ -42,7 +46,6 @@ export default function CanvasBG() {
 
       const grad = ctx.createLinearGradient(0, 0, w, h);
 
-      // Scroll-driven color morph
       const r1 = 11 + scrollFactor * 40;
       const g1 = 15 + scrollFactor * 25;
       const b1 = 26 + scrollFactor * 60;
@@ -70,12 +73,13 @@ export default function CanvasBG() {
         ctx.fill();
       });
 
-      requestAnimationFrame(draw);
+      rafId = requestAnimationFrame(draw);
     };
 
     draw();
 
     return () => {
+      cancelAnimationFrame(rafId);
       window.removeEventListener("resize", resize);
       window.removeEventListener("scroll", onScroll);
     };
