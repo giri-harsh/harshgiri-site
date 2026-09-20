@@ -63,6 +63,17 @@ body.locked { overflow: hidden; }
 .hero h1 .l { display: block; overflow: hidden; padding: 0 .04em; }
 .hero h1 .l > span { display: inline-block; }
 .blob { position: absolute; width: 26vw; height: 26vw; min-width: 180px; min-height: 180px; left: 4vw; top: 46%; border-radius: 50%; background: var(--acc); pointer-events: none; }
+.hero .cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 34px; pointer-events: auto; }
+.hero .cta .btn { background: var(--bg); }
+.hero .cta .btn.hot { background: var(--acc); }
+.hero .cta .btn .dd { width: 18px; height: 18px; }
+.sites { display: flex; gap: 6px; }
+.sites a { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--tln); background: color-mix(in srgb, var(--tbg) 82%, transparent); color: var(--tfg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); font: 600 12px var(--mono); letter-spacing: .14em; text-transform: uppercase; transition: background .3s, color .3s, border-color .3s; }
+.sites a:hover, .sites a:focus-visible { background: var(--acc); color: var(--on-acc); border-color: var(--acc); }
+.sites a .dd { width: 16px; height: 16px; }
+@media (max-width: 1100px) { .sites a span { display: none; } .sites a { width: 40px; padding: 0; justify-content: center; } }
+@media (max-width: 560px) { .sites { display: none; } }
+.top .logo { flex: none; }
 .hint { position: absolute; left: 50%; bottom: 30px; translate: -50% 0; color: var(--mid); z-index: 2; white-space: nowrap; }
 .tip { position: absolute; z-index: 3; pointer-events: none; background: var(--fg); color: var(--bg); padding: 10px 12px; border-radius: 10px; max-width: 240px; font: 400 12px/1.45 var(--mono); opacity: 0; transform: translate(-50%, calc(-100% - 18px)); transition: opacity .2s; }
 .tip b { display: block; font-weight: 600; letter-spacing: .15em; text-transform: uppercase; font-size: 10px; margin-bottom: 4px; color: var(--acc); }
@@ -346,6 +357,7 @@ section.s { position: relative; padding: 13vh var(--g); }
   <div class="r">
     <button class="theme" id="theme" type="button" aria-label="Toggle dark mode"><i></i><span id="tlabel">Dark</span></button>
     <nav class="navl" id="navl" aria-label="Sections"></nav>
+    <nav class="sites" id="sites" aria-label="Other sites"></nav>
   </div>
 </header>
 <nav class="side draw" id="side" aria-label="Profiles"></nav>
@@ -368,6 +380,8 @@ const { ICON, dd, PROFILES, glyph, squig } = HG;
 $$(".logo").forEach((l) => (l.innerHTML = glyph));
 $("#side").innerHTML = PROFILES.map(([t, h, u, k]) => `<a class="pop" href="${u}" target="_blank" rel="noopener" aria-label="${t}"><span class="ico">${dd(k)}</span><span class="lab">${t}</span></a>`).join("") + `<a class="pop" href="mailto:${C.email}" aria-label="Email"><span class="ico">${dd("mail")}</span><span class="lab">Email</span></a>`;
 $("#navl").innerHTML = [["About", "#about"], ["Work", "#work"], ["Agent", "#ask"], ["Story", "#story"], ["Contact", "#contact"]].map(([t, h]) => `<a href="${h}" data-s="${t}">${t}${squig}</a>`).join("");
+const SITES = [["Projects", C.sites.projects, "grid"], ["Résumé", C.sites.resume, "doc"]];
+$("#sites").innerHTML = SITES.map(([t, u, k]) => `<a href="${u}" aria-label="${t} — ${u.replace("https://", "")}" title="${t}">${dd(k)}<span>${t} ↗</span></a>`).join("");
 
 /* theme */
 const setTheme = (t) => { document.documentElement.dataset.theme = t; $("#tlabel").textContent = t === "dark" ? "Light" : "Dark"; try { localStorage.setItem("hg-theme", t); } catch (err) {} };
@@ -481,6 +495,7 @@ $("#app").innerHTML = `
   <div class="inner"><div>
     <div class="who cap">Harsh Giri — Agentic AI Engineer</div>
     <h1 class="big"><span class="l"><span>I build</span></span><span class="l"><span class="hl">agents</span></span><span class="l"><span>that</span></span><span class="l"><span class="hl">ship.</span></span></h1>
+    <div class="cta" id="cta"><a class="btn hot mag" href="${C.sites.projects}">${dd("grid")} All projects ↗</a><a class="btn mag" href="${C.sites.resume}">${dd("doc")} Résumé ↗</a></div>
   </div></div>
   <div class="hint cap">${fine ? "Drag the graph · click a node" : "Tap a node"} · scroll ↓</div>
 </section>
@@ -814,8 +829,8 @@ if (RM || !window.gsap) {
   $$('a[href^="#"]').forEach((a) => a.addEventListener("click", (ev) => { const h = a.getAttribute("href"); ev.preventDefault(); h === "#top" ? (lenis ? lenis.scrollTo(0) : scrollTo({ top: 0, behavior: "smooth" })) : goTo($(h)); }));
   let idleT; ScrollTrigger.create({ onUpdate: () => { if (runId && trace.querySelector(".caret")) return; busy(true); clearTimeout(idleT); idleT = setTimeout(() => busy(false), 450); } });
 
-  gsap.set(".hero h1 .l > span", { yPercent: 110 }); gsap.set(".hero .who, .hint", { opacity: 0 }); gsap.set("#blob", { scale: 0 });
-  window.addEventListener("agent:start", () => { gsap.to(".hero h1 .l > span", { yPercent: 0, duration: 1.2, ease: "expo.out", stagger: .09 }); gsap.to(".hero .who, .hint", { opacity: 1, duration: 1, delay: .5 }); gsap.to("#blob", { scale: 1, duration: 1.4, ease: "expo.out", delay: .15 }); pulseGraph(0); });
+  gsap.set(".hero h1 .l > span", { yPercent: 110 }); gsap.set(".hero .who, .hint, .hero .cta", { opacity: 0 }); gsap.set("#blob", { scale: 0 });
+  window.addEventListener("agent:start", () => { gsap.to(".hero h1 .l > span", { yPercent: 0, duration: 1.2, ease: "expo.out", stagger: .09 }); gsap.to(".hero .who, .hint, .hero .cta", { opacity: 1, duration: 1, delay: .5 }); gsap.to("#blob", { scale: 1, duration: 1.4, ease: "expo.out", delay: .15 }); pulseGraph(0); });
   if (started) window.dispatchEvent(new Event("agent:start"));
   gsap.timeline({ scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: .5, onUpdate: (st) => (heroP = st.progress) } })
     .to(".hero .inner", { yPercent: -18, opacity: .15, ease: "none" }, 0).to({ z: 1 }, { z: 1.7, ease: "none", onUpdate() { zoom = this.targets()[0].z; } }, 0).to("#blob", { scale: .06, xPercent: 60, yPercent: 180, ease: "power2.in" }, 0);
