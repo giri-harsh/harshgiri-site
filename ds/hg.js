@@ -62,7 +62,10 @@
     const check = () => { raf = 0; const el = document.elementsFromPoint(innerWidth - 120, 28).find((n) => n.dataset && n.dataset.tone); const t = el ? el.dataset.tone : "paper"; document.body.classList.toggle("tone-ink", t === "ink"); document.body.classList.toggle("tone-lime", t === "lime"); };
     let idle = 0;
     addEventListener("scroll", () => { if (!raf) raf = requestAnimationFrame(check); clearTimeout(idle); idle = setTimeout(check, 140); }, { passive: true });
-    addEventListener("resize", check); check();
+    addEventListener("resize", check);
+    // elementsFromPoint forces a full layout; at scroll 0 the answer is the default tone, so the
+    // first check waits for an idle frame instead of blocking startup.
+    window.requestIdleCallback ? requestIdleCallback(check, { timeout: 2000 }) : setTimeout(check, 300);
   }
   function magnet(els) { if (!matchMedia("(pointer: fine)").matches || !window.gsap || window.RM) return; els.forEach((m) => { const mx = gsap.quickTo(m, "x", { duration: .5, ease: "elastic.out(1,.4)" }), my = gsap.quickTo(m, "y", { duration: .5, ease: "elastic.out(1,.4)" }); m.addEventListener("pointermove", (ev) => { const b = m.getBoundingClientRect(); mx((ev.clientX - b.left - b.width / 2) * .3); my((ev.clientY - b.top - b.height / 2) * .35); }); m.addEventListener("pointerleave", () => { mx(0); my(0); }); }); }
   function fit() { $$(".fit").forEach((h) => { h.style.fontSize = ""; let fs = parseFloat(getComputedStyle(h).fontSize), g = 0; while (h.scrollWidth > h.clientWidth + 1 && fs > 20 && g++ < 80) { fs -= 1; h.style.fontSize = fs + "px"; } }); }
