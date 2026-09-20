@@ -1,16 +1,36 @@
-# React + Vite
+# harshgiri.site
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Portfolio of Harsh Giri — agentic AI, RAG and production ML — with an in-page RAG agent you can question.
+This repo is also the **single source of the shared design system** used by
+[project.harshgiri.site](https://project.harshgiri.site) and [resume.harshgiri.site](https://resume.harshgiri.site).
 
-Currently, two official plugins are available:
+```
+ds/            design system source → published at https://harshgiri.site/ds/v1/
+  core.js        identity (email, links, sites), reduced-motion flag, theme restore, analytics
+  hg.css         tokens (type, palette, spacing, easing), light/dark themes, doodle icons, chrome, buttons
+  hg.js          doodle icon set, shared header/side-rail chrome, tone-aware chrome, magnet, fit-text
+src/           the site (hand-authored HTML, GSAP + ScrollTrigger + SplitText, Lenis)
+  rag-core.js    guardrail patterns, tokenizer, synonyms — shared by the browser agent and the API
+  kb.js          GENERATED from kb/*.md
+kb/            the agent's knowledge base — one markdown file per fact chunk (see kb/README.md)
+api/           Vercel functions: /api/health, /api/ask (Groq, server-side guard, KB-only context)
+lib/llm.js     generation + rate limit, shared by api/ and the local server
+scripts/       build (→ dist/, publishes ds/v1 with fonts + manifest), local serve, kb compiler
+```
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Run locally
 
-## React Compiler
+```bash
+npm ci
+npm run dev          # build + serve → http://localhost:5170
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The agent works without any key (local extractive answers with citation + number checks).
+To use the LLM path, set `GROQ_API_KEY` (and optionally `GROQ_MODEL`, default `llama-3.3-70b-versatile`)
+in your shell locally, or in Vercel → Project → Settings → Environment Variables. The key never reaches the browser:
+the client sends only the question and the ids of the chunks it retrieved; the server looks the text up itself.
 
-## Expanding the ESLint configuration
+## Design system changes
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Edit `ds/`, deploy this repo, then redeploy the other two sites — their build pulls `https://harshgiri.site/ds/v1/manifest.json`.
+Breaking changes go to a new `/ds/v2/` path so older builds keep working.
