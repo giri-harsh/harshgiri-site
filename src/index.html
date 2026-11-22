@@ -856,7 +856,8 @@ if (RM || !window.gsap) {
   }).catch(() => {}));
   /* line-masked headings are all below the fold: split them once the main thread is free */
   const splitIn = (sel) => SplitText.create(sel, { type: "lines", mask: "lines", onSplit: (s) => gsap.from(s.lines, { yPercent: 105, stagger: .1, duration: 1.1, ease: "expo.out", scrollTrigger: { trigger: sel, start: "top 85%" } }) });
-  idle(() => loadJS("/vendor/SplitText.min.js").then(() => { gsap.registerPlugin(SplitText); [".ch-head h2", ".foot h2", ".story h2"].forEach(splitIn); }).catch(() => {}));
+  const later = [];
+  later.push(() => loadJS("/vendor/SplitText.min.js").then(() => { gsap.registerPlugin(SplitText); [".ch-head h2", ".foot h2", ".story h2"].forEach(splitIn); }).catch(() => {}));
   $$('a[href^="#"]').forEach((a) => a.addEventListener("click", (ev) => { const h = a.getAttribute("href"); ev.preventDefault(); h === "#top" ? (lenis ? lenis.scrollTo(0) : scrollTo({ top: 0, behavior: "smooth" })) : goTo($(h)); }));
   let idleT; ScrollTrigger.create({ onUpdate: () => { if (runId && trace.querySelector(".caret")) return; busy(true); clearTimeout(idleT); idleT = setTimeout(() => busy(false), 450); } });
 
@@ -867,7 +868,6 @@ if (RM || !window.gsap) {
     .to(".hero .inner", { yPercent: -18, opacity: .15, ease: "none" }, 0).to({ z: 1 }, { z: 1.7, ease: "none", onUpdate() { zoom = this.targets()[0].z; } }, 0).to("#blob", { scale: .06, xPercent: 60, yPercent: 180, ease: "power2.in" }, 0);
   $$(".rev .front").forEach((f) => { const tl = gsap.timeline({ scrollTrigger: { trigger: f, start: "top 80%", end: "bottom 45%", scrub: true } }); tl.to(f.querySelectorAll(".w"), { opacity: 1, stagger: .1, ease: "none" }, 0); f.querySelectorAll("em").forEach((m) => tl.to(m, { "--m": "100%", ease: "none", duration: 1 }, .5)); });
   /* everything from here down is below the fold — built in idle steps so no single task blocks */
-  const later = [];
   later.push(() => {
   $$(".do .t").forEach((t) => gsap.to(t, { backgroundPosition: "0% 0", ease: "none", scrollTrigger: { trigger: t, start: "top 85%", end: "top 40%", scrub: true } }));
   gsap.from(".ask", { y: 60, opacity: 0, duration: 1.1, ease: "expo.out", scrollTrigger: { trigger: ".ask", start: "top 85%" } });
