@@ -9,10 +9,10 @@ globalThis.KB = [
  },
  {
   "id": "erag",
-  "src": "Enterprise RAG",
-  "title": "Enterprise-grade agentic RAG — guardrailed Q&A over technical docs",
-  "text": "Harsh engineered a guardrailed agentic RAG service on FastAPI and LangGraph. Each turn is routed through a typed-intent state machine with conditional edges, LLM query rewriting for multi-turn coreference and a thread-scoped checkpointer. A fail-closed NeMo Guardrails (Colang) gate on Llama-3.1-8B blocks jailbreaks and off-topic input before any embedding, vector search or 70B call. Retrieval is two-stage: Qdrant cosine ANN top-15, then a quantised ONNX cross-encoder rerank to the top-5, over a 64-document corpus seeded with 57 distractor files. A dual-backend abstraction swaps 3072-dim Gemini and 768-dim MPNet embeddings, and Qdrant Cloud or an embedded index, from one config flag. It is deployed on Cloud Run as a non-root container with API-key auth and a CORS allowlist, behind a Portkey gateway for 70B to 8B fallback, response caching and retry on 429 and 503. It is traced with Logfire and LangSmith and evaluated with a RAGAS suite (faithfulness, context precision and recall, answer correctness) gated by GitHub Actions CI running 82 unit tests.",
-  "tags": "rag agentic enterprise langgraph qdrant nemo guardrails jailbreak injection fastapi cloud run portkey ragas evaluation rerank cross-encoder onnx gemini mpnet embeddings llama ci tests production"
+  "src": "Agentic RAG",
+  "title": "Agentic RAG — multi-tenant retrieval-augmented generation with guardrails",
+  "text": "Harsh designed a multi-tenant agentic RAG API on FastAPI and LangGraph with a self-correcting retrieve, grade and rewrite cycle, Postgres-backed checkpointing, Portkey LLM fallback and a fail-closed NeMo Guardrails (Colang) layer that screens prompt-injection and jailbreak attempts. Each request carries a tenant-isolated API key, Redis holds rate limits and caches, and a semantic answer cache can answer first-turn questions before any retrieval. Retrieval is hybrid in Qdrant: HNSW dense embeddings plus sparse BM25, fused with RRF, then reranked by an ONNX cross-encoder. On a limited benchmark of 60 labeled questions it reached 100% Hit@1 and 1.00 MRR at about 17 ms search latency. In a Locust load test with a simulated LLM backend, 50 tenants and 500 concurrent users, throughput rose from 15.4 to 128.6 RPS (+735%) and p95 latency fell from 55 s to 4.9 s (-91%) at 0% errors. In a Redis-outage chaos drill a circuit breaker cut p50 latency from 16,377 ms to 2,035 ms (-88%). It ships with Kubernetes manifests and is live at rag.harshgiri.site.",
+  "tags": "rag agentic rag retrieval vector search perform performance load throughput latency scale enterprise production multi-tenant tenant langgraph qdrant hybrid bm25 rrf dense hnsw nemo guardrails colang jailbreak injection fastapi postgres redis portkey fallback rerank cross-encoder onnx locust load chaos circuit breaker kubernetes semantic cache checkpointing live demo"
  },
  {
   "id": "warrant",
@@ -25,8 +25,8 @@ globalThis.KB = [
   "id": "resolvix",
   "src": "Resolvix",
   "title": "Resolvix — real-time voice agent",
-  "text": "Resolvix is a real-time voice AI agent Harsh built solo for the Build with Agora hackathon in August 2026. The stack is Agora RTC and Conversational AI Engine, LangGraph orchestration behind an OpenAI-compatible shim, Deepgram nova-3 speech recognition, a Groq-hosted LLM and Groq Orpheus text-to-speech. All four legs were live-tested: ASR, LLM, TTS and barge-in. The architecture is domain-swappable, proven with a campus pack and a clinic pack, with zero core edits enforced by import-linter.",
-  "tags": "voice agent langgraph deepgram groq agora asr tts realtime hackathon solo"
+  "text": "Resolvix is a real-time voice AI agent Harsh built solo for the Build with Agora hackathon in August 2026. The stack is Agora RTC and Conversational AI Engine, LangGraph orchestration behind an OpenAI-compatible shim, Deepgram nova-3 speech recognition, a Groq-hosted LLM and Groq Orpheus text-to-speech. All four legs were live-tested: ASR, LLM, TTS and barge-in. The architecture is domain-swappable, proven with a campus pack and a clinic pack, with zero core edits enforced by import-linter. Resolvix won 1st Place and Best Technical Excellence among 200+ teams, with a ₹45K prize.",
+  "tags": "winner won first 1st place prize best technical excellence voice agent langgraph deepgram groq agora asr tts realtime hackathon solo"
  },
  {
   "id": "yapdoc",
@@ -88,8 +88,8 @@ globalThis.KB = [
   "id": "hackathons",
   "src": "Hackathons",
   "title": "Hackathons",
-  "text": "Hackathons: Swytchcode x Knotic at the Paytm office (Warrant), Build with Agora solo hackathon (Resolvix), a Google AI Studio hackathon (LMLS), VIT Bhopal SoCF 2.0 (VITY, a phone-first AI helpline), Sketch'N'Ship 2026 (Inkling, hand-drawn paper as a live input device) and Smart India Hackathon 2026 on an ISRO problem statement for AI-based dead-reckoning navigation. He was a finalist at Build with Agora and at Swytchcode x Knotic, and a pre-finalist at the Google AI Studio hackathon, VIT Bhopal SoCF 2.0 and Sketch'N'Ship 2026.",
-  "tags": "hackathon hackathons sih smart india isro agora google paytm vit sketch competitions finalist pre-finalist result achievement ranking"
+  "text": "Hackathons: Swytchcode x Knotic at the Paytm office (Warrant), Build with Agora solo hackathon (Resolvix), a Google AI Studio hackathon (LMLS), VIT Bhopal SoCF 2.0 (VITY, a phone-first AI helpline), Sketch'N'Ship 2026 (Inkling, hand-drawn paper as a live input device) and Smart India Hackathon 2026 on an ISRO problem statement for AI-based dead-reckoning navigation. Resolvix won 1st Place and Best Technical Excellence among 200+ teams (₹45K). He was a top-5 finalist at the Google Agentic Premier League, a finalist at Build with Agora and at Swytchcode x Knotic, and a pre-finalist at the Google AI Studio hackathon, VIT Bhopal SoCF 2.0 and Sketch'N'Ship 2026.",
+  "tags": "won winner 1st first place prize google agentic premier league hackathon hackathons sih smart india isro agora google paytm vit sketch competitions finalist pre-finalist result achievement ranking"
  },
  {
   "id": "stack",
@@ -111,5 +111,19 @@ globalThis.KB = [
   "title": "Contact",
   "text": "You can reach Harsh at 2006.harshgiri@gmail.com, on LinkedIn at linkedin.com/in/giri-harsh and on GitHub at github.com/giri-harsh. He is based in Delhi, India.",
   "tags": "contact email hire reach linkedin github location"
+ },
+ {
+  "id": "junior",
+  "src": "Junior ML Dev",
+  "title": "junior-ml-dev — autonomous ML-engineer agent",
+  "text": "junior-ml-dev is an autonomous ML-engineer agent Harsh built: it turns a dataset and a goal into a trained model, a report and a model card. It runs across 4 MCP servers with 15 tools, using an LLM planner, a checkpointed state machine, a deterministic reviewer and an approval-gated deploy, and completes end-to-end runs at 135 s p50 with resume-after-kill tested. A structural action guard and an untrusted-text sanitizer mean the LLM never reads dataset text: it proposed 0 of 49 attacker actions in real-LLM prompt-injection tests. On 10 frozen held-out tasks its models scored within 1.1% of FLAML AutoML, and its leakage detector hit 96.7% recall (29 of 30 planted bugs) at 0% false alarms (0 of 30). The API is FastAPI with an arq and Redis job queue, JWT auth, token-bucket rate limiting, idempotency keys and a dead-letter queue, instrumented with OpenTelemetry, Prometheus and Grafana. It has 497 tests at 92% coverage and served 210 ms p95 at 5 users and 75 RPS at 25 users. It is live at ml.harshgiri.site.",
+  "tags": "junior ml dev autonomous agent machine learning engineer tabular automl mcp model context protocol flaml lightgbm leakage planner state machine reviewer deploy approval injection guard sanitizer fastapi arq redis jwt opentelemetry prometheus grafana tests coverage live demo"
+ },
+ {
+  "id": "breach",
+  "src": "BreachLab",
+  "title": "BreachLab — fine-tuned prompt-injection guard and jailbreak game",
+  "text": "BreachLab is a fine-tuned prompt-injection guard plus a jailbreak game. Harsh fine-tuned Qwen3-0.6B with LoRA (r=16, alpha=32) through TRL SFT on 19,330+ labeled benign and adversarial examples, including encoded, Hindi and Hinglish attacks. It cut the attack success rate from 100% to 0.59% at a 2.08% false-positive rate and 0.999 AUROC on a 1,500-item in-distribution gold set, where Meta Prompt-Guard scored 51.6% attack success and DeBERTa 10.4%. Single-pass verbalizer classification, INT4 weight-only ONNX quantization and prefix-KV caching fit it in a 2 GB CPU serverless limit (FP32 was 2,384 MB) at 720 ms p50 on 1 vCPU; dynamic INT8 was rejected because it raised the false-positive rate 10x, from 2.3% to 24.3%. The 5-level jailbreak game (Next.js, FastAPI, Groq) fails closed when the guard is down and leaked 0 of 216 template-based attacks per guarded level (levels 2 to 5). Detected leaks feed retraining, and validated models are promoted through the MLflow Model Registry. It is live at breach.harshgiri.site.",
+  "tags": "breachlab breach lab guard prompt injection jailbreak llm security fine-tune fine-tuned lora peft trl sft qwen qwen3 onnx int4 quantization serverless mlflow game next.js groq asr fpr auroc prompt-guard deberta hindi hinglish live demo"
  }
 ];
