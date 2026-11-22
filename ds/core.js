@@ -12,11 +12,15 @@
   window.RM = q || matchMedia("(prefers-reduced-motion: reduce)").matches;
   window.esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   try { const t = localStorage.getItem("hg-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
-  // Google Analytics (existing property), loaded after the page is idle so it never competes with first paint.
+  // Google Analytics (existing property). Its script costs ~700 ms of main thread on a phone, so it loads on the
+  // visitor's first interaction, or after 10 s for someone who only reads — never inside page load.
   if (!/^(localhost|127\.|192\.168\.)/.test(location.hostname)) {
     window.dataLayer = window.dataLayer || [];
     window.gtag = function () { dataLayer.push(arguments); };
     gtag("js", new Date()); gtag("config", "G-SFWR4T3NR4");
-    addEventListener("load", () => setTimeout(() => { const s = document.createElement("script"); s.async = true; s.src = "https://www.googletagmanager.com/gtag/js?id=G-SFWR4T3NR4"; document.head.appendChild(s); }, 2500));
+    const EV = ["scroll", "wheel", "pointerdown", "keydown", "touchstart"];
+    const loadGA = () => { EV.forEach((t) => removeEventListener(t, loadGA)); clearTimeout(gaT); const s = document.createElement("script"); s.async = true; s.src = "https://www.googletagmanager.com/gtag/js?id=G-SFWR4T3NR4"; document.head.appendChild(s); };
+    EV.forEach((t) => addEventListener(t, loadGA, { passive: true }));
+    const gaT = setTimeout(loadGA, 10000);
   }
 })();
